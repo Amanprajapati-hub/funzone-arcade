@@ -53,6 +53,41 @@
       this.boundKeyUp = this.onKeyUp.bind(this);
       window.addEventListener('keydown', this.boundKeyDown);
       window.addEventListener('keyup', this.boundKeyUp);
+
+      // Canvas Touch Support for Mobile
+      this.touchStartX = 0;
+      this.touchStartY = 0;
+      this.boundTouchStart = (e) => {
+        if (!this.isRunning || this.isPaused) return;
+        if (!e.touches || e.touches.length === 0) return;
+        e.preventDefault();
+        this.touchStartX = e.touches[0].clientX;
+        this.touchStartY = e.touches[0].clientY;
+      };
+      this.boundTouchEnd = (e) => {
+        if (!this.isRunning || this.isPaused) return;
+        if (!e.changedTouches || e.changedTouches.length === 0) return;
+        e.preventDefault();
+        const dx = e.changedTouches[0].clientX - this.touchStartX;
+        const dy = e.changedTouches[0].clientY - this.touchStartY;
+        const threshold = 25;
+        if (Math.abs(dx) > threshold || Math.abs(dy) > threshold) {
+          if (Math.abs(dx) > Math.abs(dy)) {
+            if (dx > 0) this.shiftLane(1);
+            else this.shiftLane(-1);
+          } else {
+            if (dy < 0) {
+              this.keys['Space'] = true;
+              setTimeout(() => { this.keys['Space'] = false; }, 400);
+            } else {
+              this.keys['ArrowDown'] = true;
+              setTimeout(() => { this.keys['ArrowDown'] = false; }, 350);
+            }
+          }
+        }
+      };
+      this.canvas.addEventListener('touchstart', this.boundTouchStart, { passive: false });
+      this.canvas.addEventListener('touchend', this.boundTouchEnd, { passive: false });
     },
 
     start() {
@@ -110,6 +145,10 @@
       }
       window.removeEventListener('keydown', this.boundKeyDown);
       window.removeEventListener('keyup', this.boundKeyUp);
+      if (this.canvas) {
+        this.canvas.removeEventListener('touchstart', this.boundTouchStart);
+        this.canvas.removeEventListener('touchend', this.boundTouchEnd);
+      }
       this.keys = {};
     },
 
@@ -128,16 +167,26 @@
       this.keys[e.key] = false;
     },
 
+    lastLaneShift: 0,
     handleInput(action, isDown) {
       if (!this.isRunning || this.isPaused) return;
+      const now = performance.now();
       if (isDown) {
-        if (action === 'left') this.shiftLane(-1);
-        if (action === 'right') this.shiftLane(1);
+        if (action === 'left' && (now - this.lastLaneShift > 200)) {
+          this.shiftLane(-1);
+          this.lastLaneShift = now;
+        } else if (action === 'right' && (now - this.lastLaneShift > 200)) {
+          this.shiftLane(1);
+          this.lastLaneShift = now;
+        }
         if (action === 'up' || action === 'actionA') this.keys['Space'] = true;
-        if (action === 'down') this.keys['ArrowDown'] = true;
+        if (action === 'down' || action === 'actionB') this.keys['ArrowDown'] = true;
       } else {
+        if (action === 'left' || action === 'right') {
+          this.lastLaneShift = 0;
+        }
         if (action === 'up' || action === 'actionA') this.keys['Space'] = false;
-        if (action === 'down') this.keys['ArrowDown'] = false;
+        if (action === 'down' || action === 'actionB') this.keys['ArrowDown'] = false;
       }
     },
 

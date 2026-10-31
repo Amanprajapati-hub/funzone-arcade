@@ -44,6 +44,36 @@
 
       this.boundKeyDown = this.onKeyDown.bind(this);
       window.addEventListener('keydown', this.boundKeyDown);
+
+      // Mobile Touch Swipe Support on Canvas
+      this.touchStartX = 0;
+      this.touchStartY = 0;
+      this.boundTouchStart = (e) => {
+        if (!this.isRunning || this.isPaused) return;
+        if (!e.touches || e.touches.length === 0) return;
+        e.preventDefault();
+        this.touchStartX = e.touches[0].clientX;
+        this.touchStartY = e.touches[0].clientY;
+      };
+      this.boundTouchEnd = (e) => {
+        if (!this.isRunning || this.isPaused) return;
+        if (!e.changedTouches || e.changedTouches.length === 0) return;
+        e.preventDefault();
+        const dx = e.changedTouches[0].clientX - this.touchStartX;
+        const dy = e.changedTouches[0].clientY - this.touchStartY;
+        const threshold = 22;
+        if (Math.abs(dx) > threshold || Math.abs(dy) > threshold) {
+          if (Math.abs(dx) > Math.abs(dy)) {
+            if (dx > 0 && this.dir.x === 0) this.nextDir = { x: 1, y: 0 };
+            else if (dx < 0 && this.dir.x === 0) this.nextDir = { x: -1, y: 0 };
+          } else {
+            if (dy > 0 && this.dir.y === 0) this.nextDir = { x: 0, y: 1 };
+            else if (dy < 0 && this.dir.y === 0) this.nextDir = { x: 0, y: -1 };
+          }
+        }
+      };
+      this.canvas.addEventListener('touchstart', this.boundTouchStart, { passive: false });
+      this.canvas.addEventListener('touchend', this.boundTouchEnd, { passive: false });
     },
 
     start() {
@@ -99,6 +129,10 @@
         this.animId = null;
       }
       window.removeEventListener('keydown', this.boundKeyDown);
+      if (this.canvas) {
+        this.canvas.removeEventListener('touchstart', this.boundTouchStart);
+        this.canvas.removeEventListener('touchend', this.boundTouchEnd);
+      }
     },
 
     onKeyDown(e) {
@@ -116,7 +150,12 @@
     },
 
     handleInput(action, isDown) {
-      if (!this.isRunning || this.isPaused || !isDown) return;
+      if (!this.isRunning || this.isPaused) return;
+      if (action === 'actionA') {
+        this.moveInterval = isDown ? 0.065 : Math.max(0.065, 0.11 - (this.score / 2000) * 0.04);
+        return;
+      }
+      if (!isDown) return;
       if (action === 'up' && this.dir.y === 0) this.nextDir = { x: 0, y: -1 };
       if (action === 'down' && this.dir.y === 0) this.nextDir = { x: 0, y: 1 };
       if (action === 'left' && this.dir.x === 0) this.nextDir = { x: -1, y: 0 };

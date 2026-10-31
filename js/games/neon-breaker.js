@@ -57,6 +57,22 @@
       window.addEventListener('keyup', this.boundKeyUp);
       this.canvas.addEventListener('mousemove', this.boundMouseMove);
       this.canvas.addEventListener('mousedown', this.boundMouseDown);
+
+      // Mobile Canvas Touch Support
+      this.boundTouchStart = (e) => {
+        if (!this.isRunning || this.isPaused) return;
+        e.preventDefault();
+        this.handleTouchPaddle(e);
+        this.launchBall();
+        this.fireLaser();
+      };
+      this.boundTouchMove = (e) => {
+        if (!this.isRunning || this.isPaused) return;
+        e.preventDefault();
+        this.handleTouchPaddle(e);
+      };
+      this.canvas.addEventListener('touchstart', this.boundTouchStart, { passive: false });
+      this.canvas.addEventListener('touchmove', this.boundTouchMove, { passive: false });
     },
 
     start() {
@@ -171,8 +187,11 @@
       if (this.canvas) {
         this.canvas.removeEventListener('mousemove', this.boundMouseMove);
         this.canvas.removeEventListener('mousedown', this.boundMouseDown);
+        this.canvas.removeEventListener('touchstart', this.boundTouchStart);
+        this.canvas.removeEventListener('touchmove', this.boundTouchMove);
       }
       this.keys = {};
+      this.joystickVector = null;
     },
 
     onKeyDown(e) {
@@ -197,13 +216,30 @@
       this.paddle.x = Math.max(this.paddle.w / 2, Math.min(this.canvas.width - this.paddle.w / 2, mouseX));
     },
 
+    handleTouchPaddle(e) {
+      if (!this.isRunning || this.isPaused) return;
+      if (e.touches && e.touches.length > 0) {
+        const t = e.touches[0];
+        const rect = this.canvas.getBoundingClientRect();
+        const scaleX = this.canvas.width / rect.width;
+        const touchX = (t.clientX - rect.left) * scaleX;
+        this.paddle.x = Math.max(this.paddle.w / 2, Math.min(this.canvas.width - this.paddle.w / 2, touchX));
+      }
+    },
+
     onMouseDown(e) {
       this.launchBall();
       this.fireLaser();
     },
 
-    handleInput(action, isDown) {
+    joystickVector: null,
+
+    handleInput(action, isDown, data) {
       if (!this.isRunning || this.isPaused) return;
+      if (action === 'vector') {
+        this.joystickVector = isDown ? data : null;
+        return;
+      }
       if (action === 'left') this.keys['ArrowLeft'] = isDown;
       if (action === 'right') this.keys['ArrowRight'] = isDown;
       if ((action === 'actionA' || action === 'actionB' || action === 'up') && isDown) {
@@ -250,12 +286,15 @@
     },
 
     update(dt) {
-      // Keyboard paddle movement
+      // Keyboard & Joystick paddle movement
       if (this.keys['ArrowLeft'] || this.keys['a'] || this.keys['A']) {
         this.paddle.x = Math.max(this.paddle.w / 2, this.paddle.x - this.paddle.speed * dt);
       }
       if (this.keys['ArrowRight'] || this.keys['d'] || this.keys['D']) {
         this.paddle.x = Math.min(this.canvas.width - this.paddle.w / 2, this.paddle.x + this.paddle.speed * dt);
+      }
+      if (this.joystickVector && Math.abs(this.joystickVector.vx) > 0.05) {
+        this.paddle.x = Math.max(this.paddle.w / 2, Math.min(this.canvas.width - this.paddle.w / 2, this.paddle.x + this.joystickVector.vx * this.paddle.speed * dt));
       }
 
       // Laser powerup timer
