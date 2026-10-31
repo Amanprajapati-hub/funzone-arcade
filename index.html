@@ -15,6 +15,8 @@
   
   <link rel="stylesheet" href="css/style.css">
   <link rel="icon" type="image/svg+xml" href="assets/logo.svg">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8621960584790241"
+     crossorigin="anonymous"></script>
 </head>
 <body>
 
@@ -455,21 +457,33 @@
         </div>
       </div>
 
-      <!-- Mobile On-Screen Virtual Gamepad -->
-      <div class="mobile-gamepad" id="mobile-gamepad">
-        <div class="dpad-cluster">
-          <button class="gamepad-btn dpad-btn up" data-action="up" aria-label="Up">▲</button>
-          <div class="dpad-middle-row">
-            <button class="gamepad-btn dpad-btn left" data-action="left" aria-label="Left">◀</button>
-            <div class="dpad-center"></div>
-            <button class="gamepad-btn dpad-btn right" data-action="right" aria-label="Right">▶</button>
+      <!-- Mobile On-Screen Virtual Gamepad & Controls Deck -->
+      <div class="mobile-gamepad" id="mobile-gamepad" aria-label="Touch Controls">
+        <!-- Bottom-Left Side: Responsive Virtual Joystick -->
+        <div class="joystick-wrapper" id="joystick-wrapper">
+          <div class="joystick-base" id="joystick-base" aria-label="Virtual Joystick">
+            <div class="joystick-ring"></div>
+            <div class="joystick-crosshair"></div>
+            <div class="joystick-arrow n">▲</div>
+            <div class="joystick-arrow s">▼</div>
+            <div class="joystick-arrow w">◀</div>
+            <div class="joystick-arrow e">▶</div>
+            <div class="joystick-knob" id="joystick-knob">
+              <div class="knob-core"></div>
+            </div>
           </div>
-          <button class="gamepad-btn dpad-btn down" data-action="down" aria-label="Down">▼</button>
+          <span class="control-label" id="joystick-label">STEER / MOVE</span>
         </div>
 
-        <div class="action-cluster">
-          <button class="gamepad-btn action-btn btn-b" data-action="actionB" aria-label="Action B">B</button>
-          <button class="gamepad-btn action-btn btn-a" data-action="actionA" aria-label="Action A">A</button>
+        <!-- Direct Touch Hint for Puzzle Games (shown when joystick is hidden) -->
+        <div class="direct-touch-hint" id="direct-touch-hint" style="display:none;">
+          <span class="dth-icon">👆</span>
+          <span class="dth-text" id="direct-touch-text">Touch & Tap directly on the screen to play!</span>
+        </div>
+
+        <!-- Bottom-Right Side: Dynamic Context-Aware Action Buttons -->
+        <div class="action-cluster" id="action-cluster">
+          <!-- Dynamically populated per game -->
         </div>
       </div>
 
@@ -502,6 +516,9 @@
   <!-- ==================== SCRIPTS ==================== -->
   <!-- Audio Engine -->
   <script src="js/audio.js"></script>
+
+  <!-- Virtual Joystick Controller -->
+  <script src="js/joystick.js"></script>
 
   <!-- 10 Original Games -->
   <script src="js/games/cyber-dash.js"></script>
