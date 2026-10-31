@@ -63,26 +63,6 @@
       this.canvas.addEventListener('mousedown', this.boundMouseDown);
       window.addEventListener('mouseup', this.boundMouseUp);
 
-      // Mobile Touch Listeners on Canvas
-      this.boundTouchStart = (e) => {
-        if (!this.isRunning || this.isPaused) return;
-        e.preventDefault();
-        this.keys['Mouse'] = true;
-        this.handleCanvasTouch(e);
-      };
-      this.boundTouchMove = (e) => {
-        if (!this.isRunning || this.isPaused) return;
-        e.preventDefault();
-        this.handleCanvasTouch(e);
-      };
-      this.boundTouchEnd = (e) => {
-        this.keys['Mouse'] = false;
-      };
-      this.canvas.addEventListener('touchstart', this.boundTouchStart, { passive: false });
-      this.canvas.addEventListener('touchmove', this.boundTouchMove, { passive: false });
-      this.canvas.addEventListener('touchend', this.boundTouchEnd, { passive: false });
-      this.canvas.addEventListener('touchcancel', this.boundTouchEnd, { passive: false });
-
       // Starfield initialization
       this.stars = [];
       for (let i = 0; i < 80; i++) {
@@ -153,14 +133,9 @@
       if (this.canvas) {
         this.canvas.removeEventListener('mousemove', this.boundMouseMove);
         this.canvas.removeEventListener('mousedown', this.boundMouseDown);
-        this.canvas.removeEventListener('touchstart', this.boundTouchStart);
-        this.canvas.removeEventListener('touchmove', this.boundTouchMove);
-        this.canvas.removeEventListener('touchend', this.boundTouchEnd);
-        this.canvas.removeEventListener('touchcancel', this.boundTouchEnd);
       }
       window.removeEventListener('mouseup', this.boundMouseUp);
       this.keys = {};
-      this.joystickVector = { vx: 0, vy: 0 };
     },
 
     onKeyDown(e) {
@@ -182,22 +157,9 @@
       const scaleY = this.canvas.height / rect.height;
       const mouseX = (e.clientX - rect.left) * scaleX;
       const mouseY = (e.clientY - rect.top) * scaleY;
+      // Smooth follow
       this.player.x = Math.max(25, Math.min(375, mouseX));
       this.player.y = Math.max(50, Math.min(560, mouseY));
-    },
-
-    handleCanvasTouch(e) {
-      if (!this.isRunning || this.isPaused) return;
-      if (e.touches && e.touches.length > 0) {
-        const t = e.touches[0];
-        const rect = this.canvas.getBoundingClientRect();
-        const scaleX = this.canvas.width / rect.width;
-        const scaleY = this.canvas.height / rect.height;
-        const touchX = (t.clientX - rect.left) * scaleX;
-        const touchY = (t.clientY - rect.top) * scaleY;
-        this.player.x = Math.max(25, Math.min(375, touchX));
-        this.player.y = Math.max(50, Math.min(560, touchY));
-      }
     },
 
     onMouseDown(e) {
@@ -208,30 +170,13 @@
       this.keys['Mouse'] = false;
     },
 
-    joystickVector: { vx: 0, vy: 0 },
-
-    handleInput(action, isDown, data) {
+    handleInput(action, isDown) {
       if (!this.isRunning || this.isPaused) return;
-      if (action === 'vector') {
-        this.joystickVector = isDown ? (data || { vx: 0, vy: 0 }) : { vx: 0, vy: 0 };
-        return;
-      }
       if (action === 'left') this.keys['ArrowLeft'] = isDown;
       if (action === 'right') this.keys['ArrowRight'] = isDown;
       if (action === 'up') this.keys['ArrowUp'] = isDown;
       if (action === 'down') this.keys['ArrowDown'] = isDown;
-      if (action === 'actionA') this.keys['Space'] = isDown;
-      if (action === 'actionB' && isDown) {
-        // Trigger Bomb screen clear
-        if (this.enemies.length > 0) {
-          window.ArcadeAudio.playExplosion();
-          this.enemies.forEach(en => this.createExplosion(en.x, en.y, en.color, 12));
-          this.enemies = [];
-          this.enemyBullets = [];
-          this.score += 150;
-          this.callbacks.onScore(this.score);
-        }
-      }
+      if (action === 'actionA' || action === 'actionB') this.keys['Space'] = isDown;
     },
 
     shoot() {
@@ -347,18 +292,13 @@
         }
       }
 
-      // Keyboard & Joystick movement
+      // Keyboard movement
       let dx = 0;
       let dy = 0;
       if (this.keys['ArrowLeft'] || this.keys['a'] || this.keys['A']) dx -= 1;
       if (this.keys['ArrowRight'] || this.keys['d'] || this.keys['D']) dx += 1;
       if (this.keys['ArrowUp'] || this.keys['w'] || this.keys['W']) dy -= 1;
       if (this.keys['ArrowDown'] || this.keys['s'] || this.keys['S']) dy += 1;
-
-      if (this.joystickVector && (this.joystickVector.vx !== 0 || this.joystickVector.vy !== 0)) {
-        dx += this.joystickVector.vx;
-        dy += this.joystickVector.vy;
-      }
 
       if (dx !== 0 || dy !== 0) {
         const len = Math.hypot(dx, dy);
