@@ -138,6 +138,10 @@
 
     restart() {
       this.destroy();
+
+      window.addEventListener('keydown', this.boundKeyDown);
+      window.addEventListener('keyup', this.boundKeyUp);
+
       this.start();
     },
 

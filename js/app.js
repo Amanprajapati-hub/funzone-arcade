@@ -192,6 +192,16 @@
     // Contact Form
     elements.contactForm = document.getElementById('contact-form');
     elements.toastNotification = document.getElementById('toast-notification');
+
+    // Touch Gamepad & Virtual Joystick Elements
+    elements.mobileGamepad = document.getElementById('mobile-gamepad');
+    elements.joystickWrapper = document.getElementById('joystick-wrapper');
+    elements.joystickBase = document.getElementById('joystick-base');
+    elements.joystickKnob = document.getElementById('joystick-knob');
+    elements.joystickLabel = document.getElementById('joystick-label');
+    elements.actionCluster = document.getElementById('action-cluster');
+    elements.directTouchHint = document.getElementById('direct-touch-hint');
+    elements.directTouchText = document.getElementById('direct-touch-text');
   }
 
   function setupEventListeners() {
@@ -319,33 +329,201 @@
     }
   }
 
+  // Mobile Game Controls Configurations
+  const GAME_CONTROLS = {
+    'cyber-dash': {
+      hasJoystick: true,
+      joystickLabel: 'STEER / BOOST',
+      buttons: [
+        { action: 'actionA', label: 'NITRO', icon: '⚡', color: 'cyan' },
+        { action: 'actionB', label: 'BRAKE', icon: '🛑', color: 'pink' }
+      ]
+    },
+    'galaxy-strike': {
+      hasJoystick: true,
+      joystickLabel: 'MOVE SHIP',
+      buttons: [
+        { action: 'actionA', label: 'SHOOT', icon: '🚀', color: 'cyan', autoRepeat: true },
+        { action: 'actionB', label: 'BOMB', icon: '💣', color: 'pink' }
+      ]
+    },
+    'neon-breaker': {
+      hasJoystick: true,
+      joystickLabel: 'PADDLE',
+      buttons: [
+        { action: 'actionA', label: 'LAUNCH', icon: '🚀', color: 'cyan' }
+      ]
+    },
+    'neon-viper': {
+      hasJoystick: true,
+      joystickLabel: 'STEER VIPER',
+      buttons: [
+        { action: 'actionA', label: 'BOOST', icon: '⚡', color: 'green' }
+      ]
+    },
+    'meteor-strike': {
+      hasJoystick: true,
+      joystickLabel: 'ROTATE / THRUST',
+      buttons: [
+        { action: 'actionA', label: 'FIRE', icon: '⚡', color: 'cyan', autoRepeat: true },
+        { action: 'up', label: 'THRUST', icon: '🚀', color: 'gold' },
+        { action: 'actionB', label: 'WARP', icon: '🌀', color: 'purple' }
+      ]
+    },
+    'cosmic-jetpack': {
+      hasJoystick: false,
+      buttons: [
+        { action: 'actionA', label: 'THRUST', icon: '🚀', color: 'cyan', isLarge: true }
+      ]
+    },
+    'drift-rush': {
+      hasJoystick: true,
+      joystickLabel: 'STEER CAR',
+      buttons: [
+        { action: 'actionA', label: 'DRIFT', icon: '💨', color: 'pink' },
+        { action: 'up', label: 'GAS', icon: '⚡', color: 'cyan' },
+        { action: 'down', label: 'BRAKE', icon: '🛑', color: 'orange' }
+      ]
+    },
+    'jewel-fusion': {
+      hasJoystick: false,
+      buttons: [],
+      hintText: 'Touch & swipe gems directly on the grid to create match-3 chains!'
+    },
+    'memory-matrix': {
+      hasJoystick: false,
+      buttons: [],
+      hintText: 'Watch the pattern flash, then tap the glowing cyber nodes!'
+    },
+    'tower-stack': {
+      hasJoystick: false,
+      buttons: [
+        { action: 'actionA', label: 'DROP', icon: '🔽', color: 'cyan', isLarge: true }
+      ]
+    }
+  };
+
   function setupMobileGamepad() {
-    const padButtons = document.querySelectorAll('.gamepad-btn');
-    padButtons.forEach(btn => {
-      const action = btn.dataset.action;
+    if (!elements.joystickBase || !elements.joystickKnob || typeof VirtualJoystick === 'undefined') return;
 
-      const handleStart = (e) => {
-        e.preventDefault();
-        btn.classList.add('pressed');
-        if (state.currentGame && window.ArcadeGames[state.currentGame.id]) {
-          window.ArcadeGames[state.currentGame.id].handleInput(action, true);
+    state.joystick = new VirtualJoystick(elements.joystickBase, elements.joystickKnob, {
+      maxRadius: 42,
+      deadzone: 0.16,
+      onMove: (data) => {
+        if (!state.currentGame || !window.ArcadeGames[state.currentGame.id]) return;
+        const game = window.ArcadeGames[state.currentGame.id];
+        if (typeof game.handleInput === 'function') {
+          // Pass analog vector to games that support it
+          game.handleInput('vector', true, data);
+          // Pass cardinal directions
+          game.handleInput('left', data.left);
+          game.handleInput('right', data.right);
+          game.handleInput('up', data.up);
+          game.handleInput('down', data.down);
         }
-      };
-
-      const handleEnd = (e) => {
-        e.preventDefault();
-        btn.classList.remove('pressed');
-        if (state.currentGame && window.ArcadeGames[state.currentGame.id]) {
-          window.ArcadeGames[state.currentGame.id].handleInput(action, false);
+      },
+      onEnd: () => {
+        if (!state.currentGame || !window.ArcadeGames[state.currentGame.id]) return;
+        const game = window.ArcadeGames[state.currentGame.id];
+        if (typeof game.handleInput === 'function') {
+          game.handleInput('vector', false, { vx: 0, vy: 0, left: false, right: false, up: false, down: false });
+          game.handleInput('left', false);
+          game.handleInput('right', false);
+          game.handleInput('up', false);
+          game.handleInput('down', false);
         }
-      };
-
-      btn.addEventListener('touchstart', handleStart, { passive: false });
-      btn.addEventListener('touchend', handleEnd, { passive: false });
-      btn.addEventListener('mousedown', handleStart);
-      btn.addEventListener('mouseup', handleEnd);
-      btn.addEventListener('mouseleave', handleEnd);
+      }
     });
+  }
+
+  function configureControlsForGame(gameId) {
+    const config = GAME_CONTROLS[gameId] || { hasJoystick: false, buttons: [] };
+
+    // 1. Virtual Joystick Visibility & Configuration
+    if (elements.joystickWrapper) {
+      if (config.hasJoystick) {
+        elements.joystickWrapper.style.display = 'flex';
+        if (elements.joystickLabel) {
+          elements.joystickLabel.textContent = config.joystickLabel || 'STEER / MOVE';
+        }
+      } else {
+        elements.joystickWrapper.style.display = 'none';
+        if (state.joystick) state.joystick.reset();
+      }
+    }
+
+    // 2. Action Buttons Visibility & Configuration
+    if (elements.actionCluster) {
+      elements.actionCluster.innerHTML = '';
+      if (config.buttons && config.buttons.length > 0) {
+        elements.actionCluster.style.display = 'flex';
+        config.buttons.forEach(btnDef => {
+          const btn = document.createElement('button');
+          btn.className = `action-touch-btn color-${btnDef.color || 'cyan'} ${btnDef.isLarge ? 'large-btn' : ''}`;
+          btn.dataset.action = btnDef.action;
+          btn.setAttribute('aria-label', btnDef.label);
+          btn.innerHTML = `
+            <span class="btn-icon">${btnDef.icon || '⚡'}</span>
+            <span class="btn-label">${btnDef.label}</span>
+          `;
+
+          let repeatInterval = null;
+
+          const handleStart = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            btn.classList.add('pressed');
+            if (state.currentGame && window.ArcadeGames[state.currentGame.id]) {
+              window.ArcadeGames[state.currentGame.id].handleInput(btnDef.action, true);
+            }
+            if (btnDef.autoRepeat) {
+              clearInterval(repeatInterval);
+              repeatInterval = setInterval(() => {
+                if (state.currentGame && window.ArcadeGames[state.currentGame.id]) {
+                  window.ArcadeGames[state.currentGame.id].handleInput(btnDef.action, true);
+                }
+              }, 160);
+            }
+          };
+
+          const handleEnd = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            btn.classList.remove('pressed');
+            if (repeatInterval) {
+              clearInterval(repeatInterval);
+              repeatInterval = null;
+            }
+            if (state.currentGame && window.ArcadeGames[state.currentGame.id]) {
+              window.ArcadeGames[state.currentGame.id].handleInput(btnDef.action, false);
+            }
+          };
+
+          btn.addEventListener('touchstart', handleStart, { passive: false });
+          btn.addEventListener('touchend', handleEnd, { passive: false });
+          btn.addEventListener('touchcancel', handleEnd, { passive: false });
+          btn.addEventListener('mousedown', handleStart);
+          btn.addEventListener('mouseup', handleEnd);
+          btn.addEventListener('mouseleave', handleEnd);
+
+          elements.actionCluster.appendChild(btn);
+        });
+      } else {
+        elements.actionCluster.style.display = 'none';
+      }
+    }
+
+    // 3. Direct Touch Hint for Pure Touch Games (Jewel Fusion, Memory Matrix)
+    if (elements.directTouchHint) {
+      if (!config.hasJoystick && (!config.buttons || config.buttons.length === 0)) {
+        elements.directTouchHint.style.display = 'flex';
+        if (elements.directTouchText) {
+          elements.directTouchText.textContent = config.hintText || 'Touch & Tap directly on the screen to play!';
+        }
+      } else {
+        elements.directTouchHint.style.display = 'none';
+      }
+    }
   }
 
   function getHighScore(gameId) {
@@ -538,8 +716,12 @@
     elements.gameOverOverlay.classList.remove('active');
     elements.newRecordBanner.style.display = 'none';
 
+    // Configure Touch Controls (Virtual Joystick & Action buttons) for this game
+    configureControlsForGame(gameId);
+
     // Open modal
     elements.gameModal.classList.add('active');
+    document.body.classList.add('game-active');
     document.body.style.overflow = 'hidden';
 
     // Initialize audio on user interaction
@@ -596,9 +778,13 @@
     if (state.currentGame && window.ArcadeGames[state.currentGame.id]) {
       window.ArcadeGames[state.currentGame.id].destroy();
     }
+    if (state.joystick) {
+      state.joystick.reset();
+    }
     state.currentGame = null;
     elements.gameModal.classList.remove('active');
     elements.gameOverOverlay.classList.remove('active');
+    document.body.classList.remove('game-active');
     document.body.style.overflow = '';
   }
 

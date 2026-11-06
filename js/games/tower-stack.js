@@ -121,6 +121,13 @@
 
     restart() {
       this.destroy();
+
+      window.addEventListener('keydown', this.boundKeyDown);
+
+      if (this.canvas) {
+        this.canvas.addEventListener('mousedown', this.boundMouseDown);
+      }
+
       this.start();
     },
 

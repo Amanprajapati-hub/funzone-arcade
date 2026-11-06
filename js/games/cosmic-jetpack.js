@@ -103,6 +103,16 @@
 
     restart() {
       this.destroy();
+
+      window.addEventListener('keydown', this.boundKeyDown);
+      window.addEventListener('keyup', this.boundKeyUp);
+
+      if (this.canvas) {
+        this.canvas.addEventListener('mousedown', this.boundMouseDown);
+      }
+
+      window.addEventListener('mouseup', this.boundMouseUp);
+
       this.start();
     },
 

@@ -108,6 +108,11 @@
 
     restart() {
       this.destroy();
+
+      if (this.canvas && this.boundMouseDown) {
+        this.canvas.addEventListener('mousedown', this.boundMouseDown);
+      }
+
       this.start();
     },
 
