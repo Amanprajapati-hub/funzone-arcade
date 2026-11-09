@@ -318,17 +318,60 @@
     // Legal Modals (Privacy & Terms)
     setupLegalModals();
 
-    // Contact Form
-    if (elements.contactForm) {
-      elements.contactForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        showToast('Thanks for your message! Our arcade team will get back to you soon.');
-        elements.contactForm.reset();
-        window.ArcadeAudio.playCoin();
-      });
-    }
-  }
+    
+// Contact Form
+if (elements.contactForm) {
+  elements.contactForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
 
+    const submitButton = elements.contactForm.querySelector(
+      'button[type="submit"]'
+    );
+
+    const originalButtonText = submitButton
+      ? submitButton.innerHTML
+      : '';
+
+    if (submitButton) {
+      submitButton.disabled = true;
+      submitButton.textContent = 'SENDING...';
+    }
+
+    try {
+      const response = await fetch(
+        'https://formspree.io/f/mqppvqzl',
+        {
+          method: 'POST',
+          body: new FormData(elements.contactForm),
+          headers: {
+            Accept: 'application/json'
+          }
+        }
+      );
+
+      if (response.ok) {
+        showToast('Message sent successfully! Thank you for contacting us.');
+
+        elements.contactForm.reset();
+
+        if (window.ArcadeAudio) {
+          window.ArcadeAudio.playCoin();
+        }
+      } else {
+        showToast('Message could not be sent. Please try again.');
+      }
+    } catch (error) {
+      showToast('Network error. Please check your connection and try again.');
+    } finally {
+      if (submitButton) {
+        submitButton.disabled = false;
+        submitButton.innerHTML = originalButtonText;
+      }
+    }
+  });
+}
+
+}
   // Mobile Game Controls Configurations
   const GAME_CONTROLS = {
     'cyber-dash': {
