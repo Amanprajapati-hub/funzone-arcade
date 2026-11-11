@@ -2277,3 +2277,27 @@ body.game-active {
 .contact-privacy-note a:hover {
     color: #ff4fd8;
 }
+
+@media (min-width: 768px) {
+  .about-section .section-header {
+    position: relative;
+    display: block !important;
+    text-align: center !important;
+  }
+
+  .about-section .section-header .section-subtitle {
+    display: block !important;
+    width: fit-content !important;
+    margin-right: auto !important;
+    margin-left: 0 !important;
+    text-align: left !important;
+  }
+
+  .about-section .section-header .section-title {
+    display: block !important;
+    width: 100% !important;
+    margin: 18px auto 20px !important;
+    text-align: center !important;
+    clear: both !important;
+  }
+}
