@@ -1,0 +1,30 @@
+
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="240" viewBox="0 0 400 240">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#090f20"/>
+      <stop offset="100%" stop-color="#15112b"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="240" rx="14" fill="url(#bg)"/>
+  <rect x="110" y="35" width="180" height="145" rx="8"
+        fill="#101b35" stroke="#42e8ff" stroke-width="3"/>
+  <g font-family="Arial" font-size="21" font-weight="bold" text-anchor="middle">
+    <g fill="#f5f7ff">
+      <text x="137" y="69">G</text><text x="177" y="69">A</text>
+      <text x="217" y="69">M</text><text x="257" y="69">E</text>
+      <text x="137" y="104">W</text><text x="177" y="104">O</text>
+      <text x="217" y="104">R</text><text x="257" y="104">D</text>
+      <text x="137" y="139">P</text><text x="177" y="139">L</text>
+      <text x="217" y="139">A</text><text x="257" y="139">Y</text>
+    </g>
+    <path d="M121 56L270 56" stroke="#ff4fd8" stroke-width="3"
+          stroke-linecap="round"/>
+    <path d="M137 83L137 148" stroke="#8cff98" stroke-width="3"
+          stroke-linecap="round"/>
+  </g>
+  <text x="200" y="215" text-anchor="middle" fill="#f5f7ff"
+        font-family="Arial" font-size="17" font-weight="bold" letter-spacing="2">
+    WORD SEARCH QUEST
+  </text>
+</svg>

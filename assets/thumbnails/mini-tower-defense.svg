@@ -1,0 +1,24 @@
+
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="240" viewBox="0 0 400 240">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#090f20"/>
+      <stop offset="100%" stop-color="#15112b"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="240" rx="14" fill="url(#bg)"/>
+  <path d="M105 185V105L145 70L185 105V185Z"
+        fill="#263b68" stroke="#42e8ff" stroke-width="3"/>
+  <path d="M95 108L145 55L195 108" fill="none"
+        stroke="#ff4fd8" stroke-width="8" stroke-linejoin="round"/>
+  <rect x="132" y="135" width="26" height="50" fill="#101b35"/>
+  <path d="M225 180V120L260 90L295 120V180Z"
+        fill="#182b50" stroke="#8cff98" stroke-width="3"/>
+  <path d="M215 122L260 75L305 122" fill="none"
+        stroke="#ffd166" stroke-width="7" stroke-linejoin="round"/>
+  <path d="M260 75V45" stroke="#42e8ff" stroke-width="5"/>
+  <text x="200" y="220" text-anchor="middle" fill="#f5f7ff"
+        font-family="Arial" font-size="17" font-weight="bold" letter-spacing="2">
+    TOWER DEFENSE
+  </text>
+</svg>

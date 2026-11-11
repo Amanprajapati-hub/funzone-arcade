@@ -1,0 +1,43 @@
+
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="240" viewBox="0 0 400 240">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#090f20"/>
+      <stop offset="100%" stop-color="#15112b"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <rect width="400" height="240" rx="14" fill="url(#bg)"/>
+  <path d="M16 34H54M16 34V72M384 34H346M384 34V72"
+        fill="none" stroke="#42e8ff" stroke-width="2"/>
+
+  <rect x="125" y="35" width="150" height="150" rx="7"
+        fill="#101b35" stroke="#42e8ff" stroke-width="3"
+        filter="url(#glow)"/>
+
+  <path d="M175 35V185M225 35V185M125 85H275M125 135H275"
+        stroke="#42e8ff" stroke-width="2" opacity=".8"/>
+
+  <g font-family="Arial" font-size="27" font-weight="bold"
+     text-anchor="middle">
+    <text x="150" y="70" fill="#ffffff">7</text>
+    <text x="200" y="70" fill="#ff4fd8">2</text>
+    <text x="250" y="120" fill="#ffffff">5</text>
+    <text x="150" y="170" fill="#42e8ff">9</text>
+    <text x="200" y="120" fill="#ff4fd8">3</text>
+    <text x="250" y="170" fill="#8cff98">1</text>
+  </g>
+
+  <text x="200" y="215" text-anchor="middle"
+        fill="#f5f7ff" font-family="Arial"
+        font-size="19" font-weight="bold" letter-spacing="3">
+    SUDOKU MASTER
+  </text>
+</svg>

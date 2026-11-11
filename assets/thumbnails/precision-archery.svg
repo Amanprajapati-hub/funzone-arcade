@@ -1,0 +1,34 @@
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 240">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#09152c"/>
+      <stop offset="100%" stop-color="#321044"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="240" rx="18" fill="url(#bg)"/>
+
+  <!-- Glowing target -->
+  <circle cx="292" cy="91" r="58" fill="#152b49" stroke="#00e5ff" stroke-width="3"/>
+  <circle cx="292" cy="91" r="43" fill="none" stroke="#ff5b8a" stroke-width="5"/>
+  <circle cx="292" cy="91" r="27" fill="none" stroke="#ffd166" stroke-width="5"/>
+  <circle cx="292" cy="91" r="11" fill="#ff5b8a"/>
+  <circle cx="292" cy="91" r="4" fill="#ffffff"/>
+
+  <!-- Archer silhouette -->
+  <circle cx="112" cy="57" r="12" fill="#ffd166"/>
+  <path d="M108 72L101 112L126 116L135 80Z" fill="#00e5ff"/>
+  <path d="M109 83L145 93L180 83" fill="none" stroke="#00e5ff" stroke-width="9" stroke-linecap="round"/>
+  <path d="M108 109L92 151L110 151L127 116" fill="#00e5ff"/>
+  <path d="M122 113L139 151L157 151L132 109" fill="#00e5ff"/>
+
+  <!-- Bow and arrow -->
+  <path d="M173 36Q218 91 173 146" fill="none" stroke="#ffd166" stroke-width="5"/>
+  <path d="M173 36L173 146" stroke="#ffffff" stroke-width="1.5"/>
+  <path d="M173 91L276 91" stroke="#ffffff" stroke-width="3"/>
+  <path d="M276 91L263 84L263 98Z" fill="#65ffb2"/>
+
+  <path d="M90 174H310" stroke="#00e5ff" stroke-width="2" opacity=".5"/>
+  <text x="200" y="207" text-anchor="middle" fill="#ffffff" font-family="Arial,sans-serif" font-size="23" font-weight="bold">PRECISION ARCHERY</text>
+  <text x="200" y="226" text-anchor="middle" fill="#00e5ff" font-family="Arial,sans-serif" font-size="10" letter-spacing="3">AIM • RELEASE • HIT</text>
+</svg>

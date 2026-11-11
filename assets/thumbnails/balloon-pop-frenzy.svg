@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#10152b"/>
+      <stop offset="55%" stop-color="#24164a"/>
+      <stop offset="100%" stop-color="#10152b"/>
+    </linearGradient>
+
+    <radialGradient id="glow">
+      <stop offset="0%" stop-color="#ff4fd8" stop-opacity=".55"/>
+      <stop offset="100%" stop-color="#ff4fd8" stop-opacity="0"/>
+    </radialGradient>
+
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="8" stdDeviation="6" flood-color="#000" flood-opacity=".45"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="800" height="450" fill="url(#bg)"/>
+  <circle cx="400" cy="220" r="300" fill="url(#glow)"/>
+
+  <!-- Decorative dots -->
+  <g fill="#fff" opacity=".25">
+    <circle cx="80" cy="70" r="3"/>
+    <circle cx="170" cy="130" r="2"/>
+    <circle cx="700" cy="90" r="3"/>
+    <circle cx="740" cy="300" r="2"/>
+    <circle cx="110" cy="350" r="3"/>
+    <circle cx="650" cy="380" r="2"/>
+  </g>
+
+  <!-- Balloon helper: Red -->
+  <g filter="url(#shadow)">
+    <ellipse cx="165" cy="230" rx="58" ry="72" fill="#ff3b5c"/>
+    <ellipse cx="145" cy="205" rx="15" ry="25" fill="#fff" opacity=".25"/>
+    <path d="M165 302 L158 318 L172 318 Z" fill="#d91f42"/>
+    <path d="M165 318 Q145 350 155 390" fill="none" stroke="#ffb3c1" stroke-width="3"/>
+  </g>
+
+  <!-- Balloon Blue -->
+  <g filter="url(#shadow)">
+    <ellipse cx="600" cy="170" rx="55" ry="70" fill="#35b8ff"/>
+    <ellipse cx="580" cy="145" rx="14" ry="24" fill="#fff" opacity=".28"/>
+    <path d="M600 240 L593 256 L607 256 Z" fill="#1688d4"/>
+    <path d="M600 256 Q620 300 605 340" fill="none" stroke="#9be5ff" stroke-width="3"/>
+  </g>
+
+  <!-- Balloon Yellow -->
+  <g filter="url(#shadow)">
+    <ellipse cx="650" cy="315" rx="48" ry="62" fill="#ffd43b"/>
+    <ellipse cx="634" cy="292" rx="12" ry="20" fill="#fff" opacity=".3"/>
+    <path d="M650 377 L644 391 L656 391 Z" fill="#d9a800"/>
+    <path d="M650 391 Q630 410 640 440" fill="none" stroke="#fff1a3" stroke-width="3"/>
+  </g>
+
+  <!-- Balloon Green -->
+  <g filter="url(#shadow)">
+    <ellipse cx="300" cy="130" rx="48" ry="60" fill="#41e890"/>
+    <ellipse cx="284" cy="108" rx="12" ry="20" fill="#fff" opacity=".28"/>
+    <path d="M300 190 L294 204 L306 204 Z" fill="#20a85d"/>
+    <path d="M300 204 Q320 240 305 270" fill="none" stroke="#aaffd0" stroke-width="3"/>
+  </g>
+
+  <!-- Popping balloon effect -->
+  <g transform="translate(430 230)" stroke-linecap="round">
+    <circle r="55" fill="#ff4fd8" opacity=".12"/>
+    <g stroke="#ff4fd8" stroke-width="8">
+      <path d="M0 -70 L0 -105"/>
+      <path d="M50 -50 L75 -75"/>
+      <path d="M70 0 L110 0"/>
+      <path d="M50 50 L78 78"/>
+      <path d="M0 70 L0 110"/>
+      <path d="M-50 50 L-78 78"/>
+      <path d="M-70 0 L-110 0"/>
+      <path d="M-50 -50 L-78 -78"/>
+    </g>
+    <circle r="35" fill="#ff4fd8"/>
+    <path d="M-18 -5 Q0 -35 18 -5 Q0 28 -18 -5" fill="#fff" opacity=".8"/>
+  </g>
+
+  <!-- Title panel -->
+  <rect x="185" y="330" width="430" height="82" rx="16"
+        fill="#0a0e20" opacity=".88" stroke="#ff4fd8" stroke-width="2"/>
+
+  <!-- Title -->
+  <text x="400" y="385"
+        text-anchor="middle"
+        font-family="Arial, sans-serif"
+        font-size="48"
+        font-weight="900"
+        letter-spacing="3"
+        fill="#ffffff">BALLOON POP</text>
+</svg>
